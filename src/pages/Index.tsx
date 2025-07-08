@@ -1,5 +1,6 @@
 import { ShoppingCart, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import TicketSelector from "@/components/TicketSelector";
 import SocialLinks from "@/components/SocialLinks";
@@ -88,13 +89,15 @@ const Index = () => {
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-foreground mb-4">Descrição/Regulamento</h3>
           <p className="text-muted-foreground text-sm mb-4">Descrição completa...</p>
-          <Button 
-            variant="ghost" 
-            className="flex items-center gap-2 text-primary hover:text-foreground transition-colors"
-          >
-            <Shield className="h-4 w-4" />
-            Ver nosso regulamento →
-          </Button>
+          <Link to="/regulamento">
+            <Button 
+              variant="ghost" 
+              className="flex items-center gap-2 text-primary hover:bg-red-500 hover:text-white transition-colors"
+            >
+              <Shield className="h-4 w-4" />
+              Ver nosso regulamento →
+            </Button>
+          </Link>
         </div>
 
         {/* Footer */}
