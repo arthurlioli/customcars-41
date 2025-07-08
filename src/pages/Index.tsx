@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import TicketSelector from "@/components/TicketSelector";
 import SocialLinks from "@/components/SocialLinks";
+import BottomNavigation from "@/components/BottomNavigation";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       <Header />
       
       <main className="px-4 pb-8">
@@ -104,6 +105,8 @@ const Index = () => {
           <p className="pt-4">Todos os direitos reservados © 2025 -</p>
         </footer>
       </main>
+      
+      <BottomNavigation />
     </div>
   );
 };
