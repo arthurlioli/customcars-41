@@ -6,15 +6,15 @@ import TicketSelector from "@/components/TicketSelector";
 import SocialLinks from "@/components/SocialLinks";
 import ResponsiveLayout from "@/components/ResponsiveLayout";
 import ImageCarousel from "@/components/ImageCarousel";
-import kawasakiNinja1 from "@/assets/kawasaki-ninja-1.jpg";
-import kawasakiNinja2 from "@/assets/kawasaki-ninja-2.jpg";
-import kawasakiNinja3 from "@/assets/kawasaki-ninja-3.jpg";
+import audiImage1 from "/lovable-uploads/776f6bdf-1e99-40c0-b11e-a8572a38c7fc.png";
+import audiImage2 from "/lovable-uploads/2b050f1e-bcd6-4104-ac01-055eed20d6c9.png";
+import audiImage3 from "/lovable-uploads/0ea4bf69-ac2e-40da-bf6d-9f780d26dac1.png";
 
 const Index = () => {
   const carouselImages = [
-    { src: kawasakiNinja1, alt: "Kawasaki Ninja Verde" },
-    { src: kawasakiNinja2, alt: "Kawasaki Ninja Preta" },
-    { src: kawasakiNinja3, alt: "Kawasaki Ninja Vermelha" },
+    { src: audiImage1, alt: "Audi RS3 Cinza" },
+    { src: audiImage2, alt: "Audi RS3 Estacionado" },
+    { src: audiImage3, alt: "Audi RS3 Esportivo" },
   ];
 
   return (
@@ -29,7 +29,7 @@ const Index = () => {
 
         {/* Raffle Info */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Kawasaki Ninja</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Audi RS3</h1>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Sorteio: Loteria Federal</span>
             <span className="text-lg font-bold text-foreground">R$4,50</span>
