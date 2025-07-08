@@ -15,18 +15,7 @@ const DesktopSidebar = () => {
 
   return (
     <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 lg:bg-card lg:border-r lg:border-border">
-      <div className="flex items-center justify-center h-16 px-4 border-b border-border">
-        <div className="flex items-center gap-2">
-          <img
-            src="/lovable-uploads/3426429b-2dfc-4a2d-9484-3932c3efec09.png"
-            alt="Club Cars Logo"
-            className="h-8 w-auto"
-          />
-          <div className="text-foreground">
-            <div className="text-sm font-bold leading-none">CUSTOM</div>
-            <div className="text-xs text-primary leading-none">CLUB CARS</div>
-          </div>
-        </div>
+      <div className="h-16 border-b border-border">
       </div>
       
       <nav className="flex-1 px-4 py-6 space-y-2">
