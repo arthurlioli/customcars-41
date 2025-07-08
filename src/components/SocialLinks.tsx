@@ -9,7 +9,7 @@ const SocialLinks = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="w-12 h-12 rounded-full bg-green-500 hover:bg-green-600 text-white"
+          className="w-12 h-12 rounded-full bg-green-500 hover:bg-primary text-white"
         >
           <MessageCircle className="h-6 w-6" />
         </Button>
@@ -23,7 +23,7 @@ const SocialLinks = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white"
+          className="w-12 h-12 rounded-full bg-blue-600 hover:bg-primary text-white"
         >
           <Facebook className="h-6 w-6" />
         </Button>

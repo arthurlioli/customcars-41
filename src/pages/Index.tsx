@@ -71,7 +71,7 @@ const Index = () => {
         <div className="mb-8">
           <Button 
             variant="ghost" 
-            className="w-full h-12 bg-card border border-border text-primary hover:bg-muted"
+            className="w-full h-12 bg-card border border-border text-primary hover:bg-primary/20 hover:border-primary transition-colors"
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
             Ver meus bilhetes
@@ -89,7 +89,7 @@ const Index = () => {
           <p className="text-muted-foreground text-sm mb-4">Descrição completa...</p>
           <Button 
             variant="ghost" 
-            className="flex items-center gap-2 text-primary"
+            className="flex items-center gap-2 text-primary hover:text-foreground transition-colors"
           >
             <Shield className="h-4 w-4" />
             Ver nosso regulamento →
