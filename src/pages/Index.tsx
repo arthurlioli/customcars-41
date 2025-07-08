@@ -29,10 +29,10 @@ const Index = () => {
 
         {/* Raffle Info */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Audi RS3</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Audi A3 com body kit da rs3 + de 350cv</h1>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Sorteio: Loteria Federal</span>
-            <span className="text-lg font-bold text-foreground">R$4,50</span>
+            <span className="text-lg font-bold text-foreground">R$4,99</span>
           </div>
         </div>
 
