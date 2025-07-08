@@ -1,23 +1,25 @@
 import { ArrowLeft, Shield, FileText, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import BottomNavigation from "@/components/BottomNavigation";
+import ResponsiveLayout from "@/components/ResponsiveLayout";
 
 const Regulamento = () => {
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <header className="flex items-center gap-4 p-4 border-b border-border">
-        <Link to="/">
-          <Button variant="ghost" size="icon" className="hover:bg-primary/20">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <h1 className="text-xl font-bold text-foreground">Regulamento</h1>
-      </header>
+    <ResponsiveLayout>
+      {/* Header - só no mobile */}
+      <div className="lg:hidden">
+        <header className="flex items-center gap-4 p-4 border-b border-border">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="hover:bg-primary hover:text-primary-foreground">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <h1 className="text-xl font-bold text-foreground">Regulamento</h1>
+        </header>
+      </div>
 
       {/* Content */}
-      <div className="p-4 space-y-6">
+      <div className="p-4 lg:p-8 space-y-6 max-w-4xl mx-auto">
         {/* Header Section */}
         <div className="text-center">
           <Shield className="h-16 w-16 text-primary mx-auto mb-4" />
@@ -120,9 +122,7 @@ const Regulamento = () => {
           </div>
         </div>
       </div>
-
-      <BottomNavigation />
-    </div>
+    </ResponsiveLayout>
   );
 };
 

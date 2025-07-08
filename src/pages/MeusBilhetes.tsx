@@ -1,7 +1,7 @@
 import { ArrowLeft, Calendar, Trophy, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import BottomNavigation from "@/components/BottomNavigation";
+import ResponsiveLayout from "@/components/ResponsiveLayout";
 
 const MeusBilhetes = () => {
   // Mock data - será substituído por dados reais do Supabase
@@ -28,19 +28,26 @@ const MeusBilhetes = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <header className="flex items-center gap-4 p-4 border-b border-border">
-        <Link to="/">
-          <Button variant="ghost" size="icon" className="hover:bg-primary/20">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <h1 className="text-xl font-bold text-foreground">Meus Bilhetes</h1>
-      </header>
+    <ResponsiveLayout>
+      {/* Header - só no mobile */}
+      <div className="lg:hidden">
+        <header className="flex items-center gap-4 p-4 border-b border-border">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="hover:bg-primary hover:text-primary-foreground">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <h1 className="text-xl font-bold text-foreground">Meus Bilhetes</h1>
+        </header>
+      </div>
 
       {/* Content */}
-      <div className="p-4 space-y-4">
+      <div className="p-4 lg:p-8 space-y-4">
+        {/* Title para desktop */}
+        <div className="hidden lg:block mb-6">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Meus Bilhetes</h1>
+          <p className="text-muted-foreground">Acompanhe seus bilhetes e resultados</p>
+        </div>
         {bilhetes.length === 0 ? (
           <div className="text-center py-12">
             <Trophy className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
@@ -130,9 +137,7 @@ const MeusBilhetes = () => {
           ))
         )}
       </div>
-
-      <BottomNavigation />
-    </div>
+    </ResponsiveLayout>
   );
 };
 

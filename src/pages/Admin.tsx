@@ -1,9 +1,24 @@
 import { Plus, Edit, Eye, BarChart3, Users, Trophy, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import AdminActionModal, { ActionData } from "@/components/AdminActionModal";
+import { useToast } from "@/hooks/use-toast";
 
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"create" | "edit" | "view">("create");
+  const [selectedAction, setSelectedAction] = useState<ActionData | undefined>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("admin_authenticated");
+    if (!isAuthenticated) {
+      navigate("/admin/login");
+    }
+  }, [navigate]);
 
   // Mock data - será substituído por dados reais do Supabase
   const acoes = [
@@ -32,6 +47,32 @@ const Admin = () => {
     bilhetesVendidos: 1250,
     acoesAtivas: 1,
     participantes: 89
+  };
+
+  const handleCreateAction = () => {
+    setModalMode("create");
+    setSelectedAction(undefined);
+    setModalOpen(true);
+  };
+
+  const handleViewAction = (action: any) => {
+    setModalMode("view");
+    setSelectedAction(action);
+    setModalOpen(true);
+  };
+
+  const handleEditAction = (action: any) => {
+    setModalMode("edit");
+    setSelectedAction(action);
+    setModalOpen(true);
+  };
+
+  const handleSaveAction = (data: ActionData) => {
+    // Aqui você implementaria a lógica de salvar no banco de dados
+    toast({
+      title: modalMode === "create" ? "Ação criada!" : "Ação atualizada!",
+      description: "As alterações foram salvas com sucesso.",
+    });
   };
 
   return (
@@ -122,7 +163,10 @@ const Admin = () => {
             {/* Header com botão de criar */}
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-foreground">Gerenciar Ações</h2>
-              <Button className="bg-primary hover:bg-primary/90">
+              <Button 
+                className="bg-primary hover:bg-primary/90"
+                onClick={handleCreateAction}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Nova Ação
               </Button>
@@ -174,11 +218,19 @@ const Admin = () => {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleViewAction(acao)}
+                    >
                       <Eye className="h-4 w-4 mr-1" />
                       Ver
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleEditAction(acao)}
+                    >
                       <Edit className="h-4 w-4 mr-1" />
                       Editar
                     </Button>
@@ -213,6 +265,14 @@ const Admin = () => {
           </div>
         )}
       </div>
+
+      <AdminActionModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSaveAction}
+        initialData={selectedAction}
+        mode={modalMode}
+      />
     </div>
   );
 };

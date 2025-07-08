@@ -1,7 +1,7 @@
 import { ArrowLeft, Trophy, Calendar, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import BottomNavigation from "@/components/BottomNavigation";
+import ResponsiveLayout from "@/components/ResponsiveLayout";
 
 const Ganhadores = () => {
   // Mock data - será substituído por dados reais do Supabase
@@ -39,21 +39,23 @@ const Ganhadores = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <header className="flex items-center gap-4 p-4 border-b border-border">
-        <Link to="/">
-          <Button variant="ghost" size="icon" className="hover:bg-primary/20">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <h1 className="text-xl font-bold text-foreground">Ganhadores</h1>
-      </header>
+    <ResponsiveLayout>
+      {/* Header - só no mobile */}
+      <div className="lg:hidden">
+        <header className="flex items-center gap-4 p-4 border-b border-border">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="hover:bg-primary hover:text-primary-foreground">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <h1 className="text-xl font-bold text-foreground">Ganhadores</h1>
+        </header>
+      </div>
 
       {/* Hero Section */}
-      <div className="text-center p-6 bg-gradient-to-b from-primary/10 to-transparent">
+      <div className="text-center p-6 lg:p-8 bg-gradient-to-b from-primary/10 to-transparent">
         <Trophy className="h-16 w-16 text-primary mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-foreground mb-2">
+        <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
           Nossos Ganhadores
         </h2>
         <p className="text-muted-foreground">
@@ -62,7 +64,7 @@ const Ganhadores = () => {
       </div>
 
       {/* Winners List */}
-      <div className="p-4 space-y-4">
+      <div className="p-4 lg:p-8 space-y-4 max-w-4xl mx-auto">
         {ganhadores.map((ganhador, index) => (
           <div
             key={ganhador.id}
@@ -148,9 +150,7 @@ const Ganhadores = () => {
           </div>
         </div>
       </div>
-
-      <BottomNavigation />
-    </div>
+    </ResponsiveLayout>
   );
 };
 

@@ -1,7 +1,7 @@
-import { ArrowLeft, User, Mail, Phone, MapPin, Edit, LogOut, CreditCard } from "lucide-react";
+import { ArrowLeft, User, Mail, Phone, MapPin, Edit, LogOut, Receipt } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import BottomNavigation from "@/components/BottomNavigation";
+import ResponsiveLayout from "@/components/ResponsiveLayout";
 
 const Perfil = () => {
   // Mock data - será substituído por dados reais do Supabase Auth
@@ -16,19 +16,26 @@ const Perfil = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <header className="flex items-center gap-4 p-4 border-b border-border">
-        <Link to="/">
-          <Button variant="ghost" size="icon" className="hover:bg-primary/20">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <h1 className="text-xl font-bold text-foreground">Meu Perfil</h1>
-      </header>
+    <ResponsiveLayout>
+      {/* Header - só no mobile */}
+      <div className="lg:hidden">
+        <header className="flex items-center gap-4 p-4 border-b border-border">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="hover:bg-primary hover:text-primary-foreground">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <h1 className="text-xl font-bold text-foreground">Meu Perfil</h1>
+        </header>
+      </div>
 
       {/* Content */}
-      <div className="p-4 space-y-6">
+      <div className="p-4 lg:p-8 space-y-6">
+        {/* Title para desktop */}
+        <div className="hidden lg:block">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Meu Perfil</h1>
+          <p className="text-muted-foreground">Gerencie suas informações pessoais</p>
+        </div>
         {/* Avatar e Nome */}
         <div className="text-center">
           <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
@@ -95,18 +102,20 @@ const Perfil = () => {
 
         {/* Ações */}
         <div className="space-y-3">
-          <Button
-            variant="ghost"
-            className="w-full h-12 bg-card border border-border justify-start text-foreground hover:bg-primary/20"
-          >
-            <CreditCard className="h-4 w-4 mr-3" />
-            Métodos de Pagamento
-          </Button>
+          <Link to="/meus-recibos">
+            <Button
+              variant="ghost"
+              className="w-full h-12 bg-card border border-border justify-start text-foreground hover:bg-primary hover:text-primary-foreground"
+            >
+              <Receipt className="h-4 w-4 mr-3" />
+              Meus Recibos
+            </Button>
+          </Link>
 
           <Link to="/meus-bilhetes">
             <Button
               variant="ghost"
-              className="w-full h-12 bg-card border border-border justify-start text-foreground hover:bg-primary/20"
+              className="w-full h-12 bg-card border border-border justify-start text-foreground hover:bg-primary hover:text-primary-foreground"
             >
               <User className="h-4 w-4 mr-3" />
               Meus Bilhetes
@@ -122,9 +131,7 @@ const Perfil = () => {
           </Button>
         </div>
       </div>
-
-      <BottomNavigation />
-    </div>
+    </ResponsiveLayout>
   );
 };
 

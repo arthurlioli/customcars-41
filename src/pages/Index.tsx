@@ -4,39 +4,28 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import TicketSelector from "@/components/TicketSelector";
 import SocialLinks from "@/components/SocialLinks";
-import BottomNavigation from "@/components/BottomNavigation";
-import kawasakiNinja from "@/assets/kawasaki-ninja-dark.jpg";
+import ResponsiveLayout from "@/components/ResponsiveLayout";
+import ImageCarousel from "@/components/ImageCarousel";
+import kawasakiNinja1 from "@/assets/kawasaki-ninja-1.jpg";
+import kawasakiNinja2 from "@/assets/kawasaki-ninja-2.jpg";
+import kawasakiNinja3 from "@/assets/kawasaki-ninja-3.jpg";
 
 const Index = () => {
+  const carouselImages = [
+    { src: kawasakiNinja1, alt: "Kawasaki Ninja Verde" },
+    { src: kawasakiNinja2, alt: "Kawasaki Ninja Preta" },
+    { src: kawasakiNinja3, alt: "Kawasaki Ninja Vermelha" },
+  ];
+
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <Header />
+    <ResponsiveLayout>
+      <div className="lg:hidden">
+        <Header />
+      </div>
       
-      <main className="px-4 pb-8">
-        {/* Hero Section with Motorcycle */}
-        <div className="relative mb-8 w-full">
-          <div className="relative w-full h-64 bg-black rounded-lg overflow-hidden">
-            <img 
-              src={kawasakiNinja} 
-              alt="Kawasaki Ninja" 
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-4 right-4">
-              <img 
-                src="/lovable-uploads/3426429b-2dfc-4a2d-9484-3932c3efec09.png" 
-                alt="Club Cars Logo" 
-                className="h-12 w-auto"
-              />
-            </div>
-          </div>
-          
-          {/* Pagination Dots */}
-          <div className="flex justify-center gap-2 mt-4">
-            <div className="w-8 h-1 bg-foreground rounded-full"></div>
-            <div className="w-2 h-1 bg-muted rounded-full"></div>
-            <div className="w-2 h-1 bg-muted rounded-full"></div>
-          </div>
-        </div>
+      <main className="px-4 lg:px-8 pb-8">
+        {/* Hero Section with Motorcycle Carousel */}
+        <ImageCarousel images={carouselImages} />
 
         {/* Raffle Info */}
         <div className="mb-6">
@@ -81,13 +70,15 @@ const Index = () => {
 
         {/* My Tickets Button */}
         <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            className="w-full h-12 bg-card border border-border text-primary hover:bg-primary/20 hover:border-primary transition-colors"
-          >
-            <ShoppingCart className="mr-2 h-4 w-4" />
-            Ver meus bilhetes
-          </Button>
+          <Link to="/meus-bilhetes">
+            <Button 
+              variant="ghost" 
+              className="w-full h-12 bg-card border border-border text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+            >
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              Ver meus bilhetes
+            </Button>
+          </Link>
         </div>
 
         {/* Social Links */}
@@ -102,7 +93,7 @@ const Index = () => {
           <Link to="/regulamento">
             <Button 
               variant="ghost" 
-              className="flex items-center gap-2 text-primary hover:bg-red-500 hover:text-white transition-colors"
+              className="flex items-center gap-2 text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
             >
               <Shield className="h-4 w-4" />
               Ver nosso regulamento →
@@ -118,9 +109,7 @@ const Index = () => {
           <p className="pt-4">Todos os direitos reservados © 2025 -</p>
         </footer>
       </main>
-      
-      <BottomNavigation />
-    </div>
+    </ResponsiveLayout>
   );
 };
 
