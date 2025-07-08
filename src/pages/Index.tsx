@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import TicketSelector from "@/components/TicketSelector";
 import SocialLinks from "@/components/SocialLinks";
 import BottomNavigation from "@/components/BottomNavigation";
-import kawasakiNinja from "@/assets/kawasaki-ninja.jpg";
+import kawasakiNinja from "@/assets/kawasaki-ninja-dark.jpg";
 
 const Index = () => {
   return (
@@ -14,12 +14,21 @@ const Index = () => {
       
       <main className="px-4 pb-8">
         {/* Hero Section with Motorcycle */}
-        <div className="relative mb-8">
-          <img 
-            src={kawasakiNinja} 
-            alt="Kawasaki Ninja" 
-            className="w-full h-64 object-contain"
-          />
+        <div className="relative mb-8 w-full">
+          <div className="relative w-full h-64 bg-black rounded-lg overflow-hidden">
+            <img 
+              src={kawasakiNinja} 
+              alt="Kawasaki Ninja" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-4 right-4">
+              <img 
+                src="/lovable-uploads/3426429b-2dfc-4a2d-9484-3932c3efec09.png" 
+                alt="Club Cars Logo" 
+                className="h-12 w-auto"
+              />
+            </div>
+          </div>
           
           {/* Pagination Dots */}
           <div className="flex justify-center gap-2 mt-4">
