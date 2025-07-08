@@ -1,51 +1,34 @@
 import { useState, useEffect } from "react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { type CarouselApi } from "@/components/ui/carousel";
-
 interface ImageCarouselProps {
   images: Array<{
     src: string;
     alt: string;
   }>;
 }
-
-const ImageCarousel = ({ images }: ImageCarouselProps) => {
+const ImageCarousel = ({
+  images
+}: ImageCarouselProps) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-
   useEffect(() => {
     if (!api) {
       return;
     }
-
     setCurrent(api.selectedScrollSnap());
-
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
-
-  return (
-    <div className="relative mb-8 w-full">
+  return <div className="relative mb-8 w-full my-[30px] py-0">
       <Carousel setApi={setApi} className="w-full">
         <CarouselContent>
-          {images.map((image, index) => (
-            <CarouselItem key={index}>
+          {images.map((image, index) => <CarouselItem key={index}>
               <div className="relative w-full h-64 bg-black rounded-lg overflow-hidden">
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="w-full h-full object-cover"
-                />
+                <img src={image.src} alt={image.alt} className="w-full h-full object-cover" />
               </div>
-            </CarouselItem>
-          ))}
+            </CarouselItem>)}
         </CarouselContent>
         <CarouselPrevious className="left-4" />
         <CarouselNext className="right-4" />
@@ -53,19 +36,8 @@ const ImageCarousel = ({ images }: ImageCarouselProps) => {
 
       {/* Pagination Dots */}
       <div className="flex justify-center gap-2 mt-4">
-        {images.map((_, index) => (
-          <div
-            key={index}
-            className={`h-1 rounded-full transition-all ${
-              index === current
-                ? "w-8 bg-foreground"
-                : "w-2 bg-muted"
-            }`}
-          />
-        ))}
+        {images.map((_, index) => <div key={index} className={`h-1 rounded-full transition-all ${index === current ? "w-8 bg-foreground" : "w-2 bg-muted"}`} />)}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ImageCarousel;
