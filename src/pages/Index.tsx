@@ -32,7 +32,7 @@ const Index = () => {
           <h1 className="text-3xl font-bold text-foreground mb-2">Kawasaki Ninja</h1>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Sorteio: Loteria Federal</span>
-            <span className="text-lg font-bold text-foreground">R$1,00</span>
+            <span className="text-lg font-bold text-foreground">R$4,50</span>
           </div>
         </div>
 
@@ -43,22 +43,22 @@ const Index = () => {
             <div className="bg-card border border-border rounded-lg p-3">
               <span className="text-primary font-bold text-lg">5</span>
               <span className="text-muted-foreground text-sm ml-1">bilhetes por</span>
-              <div className="text-foreground font-bold">R$ 4,00</div>
+              <div className="text-foreground font-bold">R$ 20,00</div>
             </div>
             <div className="bg-card border border-border rounded-lg p-3">
               <span className="text-primary font-bold text-lg">15</span>
               <span className="text-muted-foreground text-sm ml-1">bilhetes por</span>
-              <div className="text-foreground font-bold">R$ 12,00</div>
+              <div className="text-foreground font-bold">R$ 60,00</div>
             </div>
             <div className="bg-card border border-border rounded-lg p-3">
               <span className="text-primary font-bold text-lg">20</span>
               <span className="text-muted-foreground text-sm ml-1">bilhetes por</span>
-              <div className="text-foreground font-bold">R$ 16,00</div>
+              <div className="text-foreground font-bold">R$ 80,00</div>
             </div>
             <div className="bg-card border border-border rounded-lg p-3">
               <span className="text-primary font-bold text-lg">30</span>
               <span className="text-muted-foreground text-sm ml-1">bilhetes por</span>
-              <div className="text-foreground font-bold">R$ 22,00</div>
+              <div className="text-foreground font-bold">R$ 120,00</div>
             </div>
           </div>
         </div>

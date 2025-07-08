@@ -73,7 +73,7 @@ const TicketSelector = () => {
       <Button 
         className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold rounded-lg"
       >
-        Participar (R${(selectedQuantity || customQuantity).toFixed(2).replace('.', ',')})
+        Participar (R${((selectedQuantity || customQuantity) * 4.50).toFixed(2).replace('.', ',')})
       </Button>
     </div>
   );
