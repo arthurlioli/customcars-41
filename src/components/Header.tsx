@@ -14,7 +14,7 @@ const Header = () => {
         </div>
       </div>
       
-      <Button variant="ghost" size="icon">
+      <Button variant="ghost" size="icon" className="hover:bg-primary/20 hover:text-primary transition-colors">
         <Menu className="h-6 w-6" />
       </Button>
     </header>
