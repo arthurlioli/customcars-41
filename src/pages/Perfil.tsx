@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { ArrowLeft, User, Mail, Phone, MapPin, Edit, LogOut, Receipt } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import ResponsiveLayout from "@/components/ResponsiveLayout";
 
 const Perfil = () => {
@@ -13,6 +17,19 @@ const Perfil = () => {
     totalGasto: 45.00,
     bilhetesComprados: 25,
     rifasParticipadas: 3
+  };
+
+  // Estados para os campos editáveis
+  const [editData, setEditData] = useState({
+    nome: usuario.nome,
+    email: usuario.email,
+    telefone: usuario.telefone,
+    cidade: usuario.cidade
+  });
+
+  const handleSave = () => {
+    // Aqui implementar a lógica de salvar no Supabase
+    console.log("Salvando dados:", editData);
   };
 
   return (
@@ -67,10 +84,74 @@ const Perfil = () => {
         <div className="bg-card border border-border rounded-lg p-4 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-foreground">Informações Pessoais</h3>
-            <Button variant="ghost" size="sm" className="text-primary">
-              <Edit className="h-4 w-4 mr-1" />
-              Editar
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-primary">
+                  <Edit className="h-4 w-4 mr-1" />
+                  Editar
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Editar Informações Pessoais</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="nome" className="text-right">
+                      Nome
+                    </Label>
+                    <Input
+                      id="nome"
+                      value={editData.nome}
+                      onChange={(e) => setEditData({...editData, nome: e.target.value})}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="email" className="text-right">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={editData.email}
+                      onChange={(e) => setEditData({...editData, email: e.target.value})}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="telefone" className="text-right">
+                      Telefone
+                    </Label>
+                    <Input
+                      id="telefone"
+                      value={editData.telefone}
+                      onChange={(e) => setEditData({...editData, telefone: e.target.value})}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="cidade" className="text-right">
+                      Cidade
+                    </Label>
+                    <Input
+                      id="cidade"
+                      value={editData.cidade}
+                      onChange={(e) => setEditData({...editData, cidade: e.target.value})}
+                      className="col-span-3"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <DialogTrigger asChild>
+                    <Button variant="outline">Cancelar</Button>
+                  </DialogTrigger>
+                  <Button onClick={handleSave} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                    Salvar
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <div className="space-y-3">
