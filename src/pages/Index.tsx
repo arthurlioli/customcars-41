@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import TicketSelector from "@/components/TicketSelector";
 import SocialLinks from "@/components/SocialLinks";
 import BottomNavigation from "@/components/BottomNavigation";
+import kawasakiNinja from "@/assets/kawasaki-ninja.jpg";
 
 const Index = () => {
   return (
@@ -15,8 +16,8 @@ const Index = () => {
         {/* Hero Section with Motorcycle */}
         <div className="relative mb-8">
           <img 
-            src="/lovable-uploads/312253d0-5fa3-4bc9-8baf-a90534188bd1.png" 
-            alt="Moto Yamaha MT-03" 
+            src={kawasakiNinja} 
+            alt="Kawasaki Ninja" 
             className="w-full h-64 object-contain"
           />
           
@@ -30,7 +31,7 @@ const Index = () => {
 
         {/* Raffle Info */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Ação X</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Kawasaki Ninja</h1>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Sorteio: Loteria Federal</span>
             <span className="text-lg font-bold text-foreground">R$1,00</span>
