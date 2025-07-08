@@ -6,7 +6,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ResponsiveLayout from "@/components/ResponsiveLayout";
-
 const Perfil = () => {
   // Mock data - será substituído por dados reais do Supabase Auth
   const usuario = {
@@ -26,14 +25,11 @@ const Perfil = () => {
     telefone: usuario.telefone,
     cidade: usuario.cidade
   });
-
   const handleSave = () => {
     // Aqui implementar a lógica de salvar no Supabase
     console.log("Salvando dados:", editData);
   };
-
-  return (
-    <ResponsiveLayout>
+  return <ResponsiveLayout>
       {/* Header - só no mobile */}
       <div className="lg:hidden">
         <header className="flex items-center gap-4 p-4 border-b border-border">
@@ -100,46 +96,37 @@ const Perfil = () => {
                     <Label htmlFor="nome" className="text-right">
                       Nome
                     </Label>
-                    <Input
-                      id="nome"
-                      value={editData.nome}
-                      onChange={(e) => setEditData({...editData, nome: e.target.value})}
-                      className="col-span-3"
-                    />
+                    <Input id="nome" value={editData.nome} onChange={e => setEditData({
+                    ...editData,
+                    nome: e.target.value
+                  })} className="col-span-3" />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="email" className="text-right">
                       Email
                     </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={editData.email}
-                      onChange={(e) => setEditData({...editData, email: e.target.value})}
-                      className="col-span-3"
-                    />
+                    <Input id="email" type="email" value={editData.email} onChange={e => setEditData({
+                    ...editData,
+                    email: e.target.value
+                  })} className="col-span-3" />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="telefone" className="text-right">
                       Telefone
                     </Label>
-                    <Input
-                      id="telefone"
-                      value={editData.telefone}
-                      onChange={(e) => setEditData({...editData, telefone: e.target.value})}
-                      className="col-span-3"
-                    />
+                    <Input id="telefone" value={editData.telefone} onChange={e => setEditData({
+                    ...editData,
+                    telefone: e.target.value
+                  })} className="col-span-3" />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="cidade" className="text-right">
                       Cidade
                     </Label>
-                    <Input
-                      id="cidade"
-                      value={editData.cidade}
-                      onChange={(e) => setEditData({...editData, cidade: e.target.value})}
-                      className="col-span-3"
-                    />
+                    <Input id="cidade" value={editData.cidade} onChange={e => setEditData({
+                    ...editData,
+                    cidade: e.target.value
+                  })} className="col-span-3" />
                   </div>
                 </div>
                 <div className="flex justify-end gap-2">
@@ -184,36 +171,25 @@ const Perfil = () => {
         {/* Ações */}
         <div className="space-y-3">
           <Link to="/meus-recibos">
-            <Button
-              variant="ghost"
-              className="w-full h-12 bg-card border border-border justify-start text-foreground hover:bg-primary hover:text-primary-foreground"
-            >
+            <Button variant="ghost" className="w-full h-12 bg-card border border-border justify-start text-foreground hover:bg-primary hover:text-primary-foreground py-0 my-[15px]">
               <Receipt className="h-4 w-4 mr-3" />
               Meus Recibos
             </Button>
           </Link>
 
           <Link to="/meus-bilhetes">
-            <Button
-              variant="ghost"
-              className="w-full h-12 bg-card border border-border justify-start text-foreground hover:bg-primary hover:text-primary-foreground"
-            >
+            <Button variant="ghost" className="w-full h-12 bg-card border border-border justify-start text-foreground hover:bg-primary hover:text-primary-foreground">
               <User className="h-4 w-4 mr-3" />
               Meus Bilhetes
             </Button>
           </Link>
 
-          <Button
-            variant="ghost"
-            className="w-full h-12 bg-card border border-border justify-start text-destructive hover:bg-destructive/20"
-          >
+          <Button variant="ghost" className="w-full h-12 bg-card border border-border justify-start text-destructive hover:bg-destructive/20">
             <LogOut className="h-4 w-4 mr-3" />
             Sair da Conta
           </Button>
         </div>
       </div>
-    </ResponsiveLayout>
-  );
+    </ResponsiveLayout>;
 };
-
 export default Perfil;
