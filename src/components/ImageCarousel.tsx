@@ -43,13 +43,6 @@ const ImageCarousel = ({ images }: ImageCarouselProps) => {
                   alt={image.alt}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute top-4 right-4">
-                  <img
-                    src="/lovable-uploads/3426429b-2dfc-4a2d-9484-3932c3efec09.png"
-                    alt="Club Cars Logo"
-                    className="h-12 w-auto"
-                  />
-                </div>
               </div>
             </CarouselItem>
           ))}

@@ -10,10 +10,6 @@ const Header = () => {
           alt="Club Cars Logo"
           className="h-10 w-auto"
         />
-        <div className="text-foreground">
-          <div className="text-sm font-bold leading-none">CUSTOM</div>
-          <div className="text-xs text-primary leading-none">CLUB CARS</div>
-        </div>
       </div>
       
       <Button variant="ghost" size="icon" className="hover:bg-primary/20 hover:text-primary transition-colors">
