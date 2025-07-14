@@ -24,20 +24,22 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Inicializar Supabase client para autenticação
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-    );
+    // Tentar obter usuário autenticado (opcional para pagamentos de convidado)
+    let user = null;
+    try {
+      const supabaseClient = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+      );
 
-    // Verificar usuário autenticado
-    const authHeader = req.headers.get("Authorization")!;
-    const token = authHeader.replace("Bearer ", "");
-    const { data } = await supabaseClient.auth.getUser(token);
-    const user = data.user;
-
-    if (!user) {
-      throw new Error("Usuário não autenticado");
+      const authHeader = req.headers.get("Authorization");
+      if (authHeader) {
+        const token = authHeader.replace("Bearer ", "");
+        const { data } = await supabaseClient.auth.getUser(token);
+        user = data.user;
+      }
+    } catch (error) {
+      console.log("Usuario não autenticado, processando como convidado");
     }
 
     const amount = quantity * 4.99;
@@ -47,11 +49,11 @@ serve(async (req) => {
       throw new Error("Token do Mercado Pago não configurado");
     }
 
-    // Criar order no banco
+    // Criar order no banco (com ou sem usuário)
     const { data: order, error: orderError } = await supabaseAdmin
       .from("orders")
       .insert({
-        user_id: user.id,
+        user_id: user?.id || null, // null para convidados
         quantity,
         amount,
         status: "pending",
