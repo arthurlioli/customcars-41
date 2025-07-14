@@ -1,0 +1,2 @@
+-- Add secret for Mercado Pago API token
+-- This will be configured through the Supabase dashboard

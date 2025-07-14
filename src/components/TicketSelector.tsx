@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface TicketOption {
   quantity: number;
@@ -19,6 +21,38 @@ const ticketOptions: TicketOption[] = [
 const TicketSelector = () => {
   const [selectedQuantity, setSelectedQuantity] = useState(30);
   const [customQuantity, setCustomQuantity] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+      const quantity = selectedQuantity || customQuantity;
+
+      const { data, error } = await supabase.functions.invoke('create-pix-payment', {
+        body: { quantity }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.checkout_url) {
+        window.open(data.checkout_url, '_blank');
+      } else {
+        throw new Error('URL de checkout não recebida');
+      }
+    } catch (error: any) {
+      console.error('Erro no pagamento:', error);
+      toast({
+        title: "Erro no pagamento",
+        description: error.message || "Ocorreu um erro ao processar o pagamento",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -71,9 +105,11 @@ const TicketSelector = () => {
 
       {/* Participate Button */}
       <Button 
-        className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold rounded-lg"
+        onClick={handlePayment}
+        disabled={loading}
+        className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold rounded-lg disabled:opacity-50"
       >
-        Participar (R${((selectedQuantity || customQuantity) * 4.99).toFixed(2).replace('.', ',')})
+        {loading ? 'Processando...' : `Participar (R${((selectedQuantity || customQuantity) * 4.99).toFixed(2).replace('.', ',')})`}
       </Button>
     </div>
   );
