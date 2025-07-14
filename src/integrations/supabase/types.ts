@@ -14,13 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          mp_preference_id: string | null
+          quantity: number
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          mp_preference_id?: string | null
+          quantity: number
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          mp_preference_id?: string | null
+          quantity?: number
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      tickets: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          ticket_number: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          ticket_number: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          ticket_number?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_next_ticket_numbers: {
+        Args: { quantity: number }
+        Returns: number[]
+      }
     }
     Enums: {
       [_ in never]: never

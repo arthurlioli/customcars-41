@@ -65,6 +65,29 @@ serve(async (req) => {
       throw new Error(`Erro ao criar pedido: ${orderError.message}`);
     }
 
+    // Gerar números dos bilhetes
+    const { data: ticketNumbers, error: ticketError } = await supabaseAdmin
+      .rpc('get_next_ticket_numbers', { quantity });
+
+    if (ticketError) {
+      throw new Error(`Erro ao gerar números dos bilhetes: ${ticketError.message}`);
+    }
+
+    // Criar bilhetes individuais
+    const ticketsToInsert = ticketNumbers.map((ticketNumber: number) => ({
+      order_id: order.id,
+      user_id: user?.id || null,
+      ticket_number: ticketNumber,
+    }));
+
+    const { error: insertTicketsError } = await supabaseAdmin
+      .from("tickets")
+      .insert(ticketsToInsert);
+
+    if (insertTicketsError) {
+      throw new Error(`Erro ao criar bilhetes: ${insertTicketsError.message}`);
+    }
+
     // Criar preference no Mercado Pago
     const preference = {
       items: [
