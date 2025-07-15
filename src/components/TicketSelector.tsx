@@ -109,7 +109,7 @@ const TicketSelector = () => {
         disabled={loading}
         className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold rounded-lg disabled:opacity-50"
       >
-        {loading ? 'Processando...' : `Participar (R${((selectedQuantity || customQuantity) * 4.99).toFixed(2).replace('.', ',')})`}
+        {loading ? 'Processando...' : `Participar (R$ ${((selectedQuantity || customQuantity) * 4.99).toFixed(2).replace('.', ',')})`}
       </Button>
     </div>
   );
