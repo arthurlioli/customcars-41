@@ -49,6 +49,9 @@ serve(async (req) => {
       throw new Error("Token do Mercado Pago não configurado");
     }
 
+    console.log("Token length:", mercadoPagoToken.length);
+    console.log("Token prefix:", mercadoPagoToken.substring(0, 8));
+
     // Criar order no banco (com ou sem usuário)
     const { data: order, error: orderError } = await supabaseAdmin
       .from("orders")
