@@ -120,6 +120,13 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      make_all_users_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          email: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
