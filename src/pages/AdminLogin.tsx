@@ -17,18 +17,6 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: isAdmin } = await supabase.rpc('is_admin', { user_id: user.id });
-        if (isAdmin) {
-          navigate("/admin");
-        }
-      }
-    };
-    checkAuth();
-  }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
