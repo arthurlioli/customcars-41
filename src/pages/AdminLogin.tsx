@@ -13,7 +13,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -35,62 +35,34 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      if (isSignUp) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`
-          }
-        });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        if (data.user) {
-          // Criar perfil de admin
-          const { error: profileError } = await supabase
-            .from('admin_profiles')
-            .insert([
-              { user_id: data.user.id, email }
-            ]);
-
-          if (profileError) throw profileError;
-
+      if (data.user) {
+        const { data: isAdmin } = await supabase.rpc('is_admin', { user_id: data.user.id });
+        
+        if (isAdmin) {
           toast({
-            title: "Cadastro realizado com sucesso!",
-            description: "Verifique seu email para confirmar a conta.",
+            title: "Login realizado com sucesso!",
+            description: "Bem-vindo ao painel administrativo.",
           });
-        }
-      } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-
-        if (data.user) {
-          const { data: isAdmin } = await supabase.rpc('is_admin', { user_id: data.user.id });
-          
-          if (isAdmin) {
-            toast({
-              title: "Login realizado com sucesso!",
-              description: "Bem-vindo ao painel administrativo.",
-            });
-            navigate("/admin");
-          } else {
-            toast({
-              title: "Acesso negado",
-              description: "Você não tem permissão para acessar o painel administrativo.",
-              variant: "destructive",
-            });
-            await supabase.auth.signOut();
-          }
+          navigate("/admin");
+        } else {
+          toast({
+            title: "Acesso negado",
+            description: "Você não tem permissão para acessar o painel administrativo.",
+            variant: "destructive",
+          });
+          await supabase.auth.signOut();
         }
       }
     } catch (error: any) {
       toast({
-        title: isSignUp ? "Erro no cadastro" : "Erro no login",
+        title: "Erro no login",
         description: error.message || "Ocorreu um erro. Tente novamente.",
         variant: "destructive",
       });
@@ -109,10 +81,10 @@ const AdminLogin = () => {
             </div>
           </div>
           <CardTitle className="text-2xl font-bold">
-            {isSignUp ? "Cadastro Administrativo" : "Acesso Administrativo"}
+            Acesso Administrativo
           </CardTitle>
           <p className="text-muted-foreground">
-            {isSignUp ? "Crie sua conta de administrador" : "Entre com suas credenciais de administrador"}
+            Entre com suas credenciais de administrador
           </p>
         </CardHeader>
         <CardContent>
@@ -159,20 +131,9 @@ const AdminLogin = () => {
               className="w-full" 
               disabled={isLoading}
             >
-              {isLoading ? "Processando..." : (isSignUp ? "Cadastrar" : "Entrar")}
+              {isLoading ? "Processando..." : "Entrar"}
             </Button>
           </form>
-          
-          <div className="mt-4 text-center">
-            <Button
-              type="button"
-              variant="link"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm"
-            >
-              {isSignUp ? "Já tem conta? Fazer login" : "Não tem conta? Cadastrar"}
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>
