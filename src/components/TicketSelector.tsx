@@ -28,6 +28,9 @@ const TicketSelector = () => {
     setShowCheckout(true);
   };
 
+  const currentQuantity = selectedQuantity || customQuantity;
+  const totalPrice = (currentQuantity * 4.99).toFixed(2).replace('.', ',');
+
   return (
     <div className="space-y-6">
       {/* Ticket Options Grid */}
@@ -93,13 +96,13 @@ const TicketSelector = () => {
         onClick={handlePayment}
         className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold rounded-lg"
       >
-        {`Participar (R$ ${((selectedQuantity || customQuantity) * 4.99).toFixed(2).replace('.', ',')})`}
+        Participar (R$ {totalPrice})
       </Button>
 
       {/* PIX Checkout Modal */}
       {showCheckout && (
         <PixCheckout
-          quantity={selectedQuantity || customQuantity}
+          quantity={currentQuantity}
           onClose={() => setShowCheckout(false)}
         />
       )}
