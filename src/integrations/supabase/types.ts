@@ -108,6 +108,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_admin_profile: {
+        Args: { admin_email: string }
+        Returns: string
+      }
       get_next_ticket_numbers: {
         Args: { quantity: number }
         Returns: number[]
