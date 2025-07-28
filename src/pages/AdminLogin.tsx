@@ -46,7 +46,6 @@ const AdminLogin = () => {
         const { data: isAdmin } = await supabase.rpc('is_admin', { user_id: data.user.id });
         
         if (isAdmin) {
-          localStorage.setItem("admin_authenticated", "true");
           toast({
             title: "Login realizado com sucesso!",
             description: "Bem-vindo ao painel administrativo.",

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminActionModal, { ActionData } from "@/components/AdminActionModal";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -14,10 +15,20 @@ const Admin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("admin_authenticated");
-    if (!isAuthenticated) {
-      navigate("/admin/login");
-    }
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/admin/login");
+        return;
+      }
+      
+      const { data: isAdmin } = await supabase.rpc('is_admin', { user_id: user.id });
+      if (!isAdmin) {
+        navigate("/admin/login");
+      }
+    };
+    
+    checkAuth();
   }, [navigate]);
 
   // Mock data - será substituído por dados reais do Supabase
