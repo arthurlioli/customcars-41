@@ -12,8 +12,8 @@ serve(async (req) => {
   }
 
   try {
-    const { quantity } = await req.json();
-    
+    const { quantity, customer } = await req.json();
+
     if (!quantity || quantity < 1) {
       throw new Error("Quantidade inválida");
     }
@@ -91,60 +91,54 @@ serve(async (req) => {
       throw new Error(`Erro ao criar bilhetes: ${insertTicketsError.message}`);
     }
 
-    // Criar preference no Mercado Pago
-    const preference = {
-      items: [
-        {
-          title: `${quantity} bilhetes - Sorteio Audi A3`,
-          quantity: 1,
-          unit_price: amount,
-          currency_id: "BRL",
-        },
-      ],
-      payment_methods: {
-        excluded_payment_types: [
-          { id: "credit_card" },
-          { id: "debit_card" },
-          { id: "ticket" },
-        ],
-        excluded_payment_methods: [],
+    // Criar pagamento PIX no Mercado Pago
+    const payment = {
+      transaction_amount: amount,
+      description: `${quantity} bilhetes - Sorteio Kawasaki Ninja`,
+      payment_method_id: "pix",
+      payer: {
+        email: customer?.email || "guest@example.com",
+        first_name: customer?.name?.split(' ')[0] || "Cliente",
+        last_name: customer?.name?.split(' ').slice(1).join(' ') || "Convidado",
+        identification: customer?.identification || {
+          type: "CPF",
+          number: "11111111111"
+        }
       },
-      back_urls: {
-        success: `${req.headers.get("origin")}/payment-success?order_id=${order.id}`,
-        failure: `${req.headers.get("origin")}/payment-failed`,
-        pending: `${req.headers.get("origin")}/payment-pending`,
-      },
-      auto_return: "approved",
       external_reference: order.id,
-      notification_url: `${req.headers.get("origin")}/webhook/mercadopago`,
     };
 
-    const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
+    const response = await fetch("https://api.mercadopago.com/v1/payments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${mercadoPagoToken}`,
       },
-      body: JSON.stringify(preference),
+      body: JSON.stringify(payment),
     });
 
     if (!response.ok) {
       const error = await response.text();
+      console.error("Erro do Mercado Pago:", error);
       throw new Error(`Erro do Mercado Pago: ${error}`);
     }
 
     const mpResponse = await response.json();
+    console.log("Resposta do Mercado Pago:", JSON.stringify(mpResponse, null, 2));
 
-    // Atualizar order com MP preference ID
+    // Atualizar order com MP payment ID
     await supabaseAdmin
       .from("orders")
-      .update({ mp_preference_id: mpResponse.id })
+      .update({ mp_preference_id: mpResponse.id?.toString() })
       .eq("id", order.id);
 
     return new Response(
       JSON.stringify({
-        checkout_url: mpResponse.init_point,
+        qr_code: mpResponse.point_of_interaction?.transaction_data?.qr_code,
+        qr_code_base64: mpResponse.point_of_interaction?.transaction_data?.qr_code_base64,
+        payment_id: mpResponse.id,
         order_id: order.id,
+        ticket_numbers: ticketNumbers,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

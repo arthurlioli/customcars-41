@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
+import PixCheckout from "./PixCheckout";
 import { useToast } from "@/hooks/use-toast";
 
 interface TicketOption {
@@ -21,37 +21,11 @@ const ticketOptions: TicketOption[] = [
 const TicketSelector = () => {
   const [selectedQuantity, setSelectedQuantity] = useState<number | null>(30);
   const [customQuantity, setCustomQuantity] = useState(30);
-  const [loading, setLoading] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const { toast } = useToast();
 
-  const handlePayment = async () => {
-    try {
-      setLoading(true);
-      const quantity = selectedQuantity || customQuantity;
-
-      const { data, error } = await supabase.functions.invoke('create-pix-payment', {
-        body: { quantity }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data?.checkout_url) {
-        window.open(data.checkout_url, '_blank');
-      } else {
-        throw new Error('URL de checkout não recebida');
-      }
-    } catch (error: any) {
-      console.error('Erro no pagamento:', error);
-      toast({
-        title: "Erro no pagamento",
-        description: error.message || "Ocorreu um erro ao processar o pagamento",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handlePayment = () => {
+    setShowCheckout(true);
   };
 
   return (
@@ -117,11 +91,18 @@ const TicketSelector = () => {
       {/* Participate Button */}
       <Button 
         onClick={handlePayment}
-        disabled={loading}
-        className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold rounded-lg disabled:opacity-50"
+        className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold rounded-lg"
       >
-        {loading ? 'Processando...' : `Participar (R$ ${((selectedQuantity || customQuantity) * 4.99).toFixed(2).replace('.', ',')})`}
+        {`Participar (R$ ${((selectedQuantity || customQuantity) * 4.99).toFixed(2).replace('.', ',')})`}
       </Button>
+
+      {/* PIX Checkout Modal */}
+      {showCheckout && (
+        <PixCheckout
+          quantity={selectedQuantity || customQuantity}
+          onClose={() => setShowCheckout(false)}
+        />
+      )}
     </div>
   );
 };

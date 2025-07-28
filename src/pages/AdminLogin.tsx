@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,37 +6,97 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: isAdmin } = await supabase.rpc('is_admin', { user_id: user.id });
+        if (isAdmin) {
+          navigate("/admin");
+        }
+      }
+    };
+    checkAuth();
+  }, [navigate]);
+
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulação de login - substituir por autenticação real
-    setTimeout(() => {
-      if (email === "admin@clubcars.com" && password === "admin123") {
-        localStorage.setItem("admin_authenticated", "true");
-        toast({
-          title: "Login realizado com sucesso!",
-          description: "Bem-vindo ao painel administrativo.",
+    try {
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`
+          }
         });
-        navigate("/admin");
+
+        if (error) throw error;
+
+        if (data.user) {
+          // Criar perfil de admin
+          const { error: profileError } = await supabase
+            .from('admin_profiles')
+            .insert([
+              { user_id: data.user.id, email }
+            ]);
+
+          if (profileError) throw profileError;
+
+          toast({
+            title: "Cadastro realizado com sucesso!",
+            description: "Verifique seu email para confirmar a conta.",
+          });
+        }
       } else {
-        toast({
-          title: "Erro no login",
-          description: "Credenciais inválidas. Tente novamente.",
-          variant: "destructive",
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
+
+        if (error) throw error;
+
+        if (data.user) {
+          const { data: isAdmin } = await supabase.rpc('is_admin', { user_id: data.user.id });
+          
+          if (isAdmin) {
+            toast({
+              title: "Login realizado com sucesso!",
+              description: "Bem-vindo ao painel administrativo.",
+            });
+            navigate("/admin");
+          } else {
+            toast({
+              title: "Acesso negado",
+              description: "Você não tem permissão para acessar o painel administrativo.",
+              variant: "destructive",
+            });
+            await supabase.auth.signOut();
+          }
+        }
       }
+    } catch (error: any) {
+      toast({
+        title: isSignUp ? "Erro no cadastro" : "Erro no login",
+        description: error.message || "Ocorreu um erro. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -48,19 +108,21 @@ const AdminLogin = () => {
               <Shield className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Acesso Administrativo</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            {isSignUp ? "Cadastro Administrativo" : "Acesso Administrativo"}
+          </CardTitle>
           <p className="text-muted-foreground">
-            Entre com suas credenciais de administrador
+            {isSignUp ? "Crie sua conta de administrador" : "Entre com suas credenciais de administrador"}
           </p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleAuth} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@clubcars.com"
+                placeholder="admin@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -97,16 +159,19 @@ const AdminLogin = () => {
               className="w-full" 
               disabled={isLoading}
             >
-              {isLoading ? "Entrando..." : "Entrar"}
+              {isLoading ? "Processando..." : (isSignUp ? "Cadastrar" : "Entrar")}
             </Button>
           </form>
           
-          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground text-center">
-              <strong>Credenciais de teste:</strong><br />
-              Email: admin@clubcars.com<br />
-              Senha: admin123
-            </p>
+          <div className="mt-4 text-center">
+            <Button
+              type="button"
+              variant="link"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-sm"
+            >
+              {isSignUp ? "Já tem conta? Fazer login" : "Não tem conta? Cadastrar"}
+            </Button>
           </div>
         </CardContent>
       </Card>
