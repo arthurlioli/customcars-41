@@ -123,8 +123,8 @@ export type Database = {
       make_all_users_admin: {
         Args: Record<PropertyKey, never>
         Returns: {
-          user_id: string
-          email: string
+          admin_user_id: string
+          admin_email: string
         }[]
       }
     }
