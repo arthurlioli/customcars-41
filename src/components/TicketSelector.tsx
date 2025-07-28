@@ -19,8 +19,8 @@ const ticketOptions: TicketOption[] = [
 ];
 
 const TicketSelector = () => {
-  const [selectedQuantity, setSelectedQuantity] = useState(30);
-  const [customQuantity, setCustomQuantity] = useState(1);
+  const [selectedQuantity, setSelectedQuantity] = useState<number | null>(30);
+  const [customQuantity, setCustomQuantity] = useState(30);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -62,7 +62,10 @@ const TicketSelector = () => {
           <Button
             key={option.quantity}
             variant="ghost"
-            onClick={() => setSelectedQuantity(option.quantity)}
+            onClick={() => {
+              setSelectedQuantity(option.quantity);
+              setCustomQuantity(option.quantity);
+            }}
             className={cn(
               "relative h-16 flex flex-col items-center justify-center border border-border bg-card text-card-foreground hover:bg-primary/20 hover:border-primary transition-colors",
               selectedQuantity === option.quantity && "border-primary bg-primary/10",
@@ -85,7 +88,11 @@ const TicketSelector = () => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setCustomQuantity(Math.max(1, customQuantity - 1))}
+          onClick={() => {
+            const newQuantity = Math.max(1, customQuantity - 1);
+            setCustomQuantity(newQuantity);
+            setSelectedQuantity(null);
+          }}
           className="w-12 h-12 bg-card border border-border hover:bg-primary/20 hover:border-primary transition-colors"
         >
           -
@@ -96,7 +103,11 @@ const TicketSelector = () => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setCustomQuantity(customQuantity + 1)}
+          onClick={() => {
+            const newQuantity = customQuantity + 1;
+            setCustomQuantity(newQuantity);
+            setSelectedQuantity(null);
+          }}
           className="w-12 h-12 bg-card border border-border hover:bg-primary/20 hover:border-primary transition-colors"
         >
           +
