@@ -2,7 +2,4 @@
 command = "npm run build"
 
 [deploy]
-startCommand = "npm run preview"
-
-[env]
-PORT = "8080"
+startCommand = "npm run preview -- --host 0.0.0.0 --port $PORT"
