@@ -4,39 +4,8 @@ import { Button } from "@/components/ui/button";
 import ResponsiveLayout from "@/components/ResponsiveLayout";
 
 const Ganhadores = () => {
-  // Mock data - será substituído por dados reais do Supabase
-  const ganhadores = [
-    {
-      id: 1,
-      nome: "Carlos M.",
-      premio: "Honda CB600F Hornet",
-      numeroBilhete: "00847",
-      dataGanho: "2024-12-07",
-      cidade: "São Paulo, SP",
-      foto: null,
-      acao: "Ação Y"
-    },
-    {
-      id: 2,
-      nome: "Maria S.",
-      premio: "Kawasaki Ninja 300",
-      numeroBilhete: "01234",
-      dataGanho: "2024-11-15",
-      cidade: "Rio de Janeiro, RJ",
-      foto: null,
-      acao: "Ação W"
-    },
-    {
-      id: 3,
-      nome: "João P.",
-      premio: "Yamaha YZF-R3",
-      numeroBilhete: "00567",
-      dataGanho: "2024-10-28",
-      cidade: "Belo Horizonte, MG",
-      foto: null,
-      acao: "Ação V"
-    }
-  ];
+  // Dados reais serão carregados do banco de dados
+  const ganhadores: any[] = [];
 
   return (
     <ResponsiveLayout>
@@ -65,7 +34,23 @@ const Ganhadores = () => {
 
       {/* Winners List */}
       <div className="p-4 lg:p-8 space-y-4 max-w-4xl mx-auto">
-        {ganhadores.map((ganhador, index) => (
+        {ganhadores.length === 0 ? (
+          <div className="text-center py-12">
+            <Trophy className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-lg font-semibold text-foreground mb-2">
+              Nenhum ganhador ainda
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Em breve teremos nossos primeiros ganhadores!
+            </p>
+            <Link to="/">
+              <Button className="bg-primary hover:bg-primary/90">
+                Participar Agora
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          ganhadores.map((ganhador, index) => (
           <div
             key={ganhador.id}
             className="bg-card border border-border rounded-lg p-4 relative overflow-hidden"
@@ -116,8 +101,11 @@ const Ganhadores = () => {
               </div>
             </div>
           </div>
-        ))}
+          ))
+        )}
 
+        {ganhadores.length > 0 && (
+          <>
         {/* Call to Action */}
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-lg p-6 text-center mt-8">
           <Trophy className="h-12 w-12 text-primary mx-auto mb-3" />
@@ -141,7 +129,7 @@ const Ganhadores = () => {
             <div className="text-xs text-muted-foreground">Ganhadores</div>
           </div>
           <div className="bg-card border border-border rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-primary">R$ 45k</div>
+            <div className="text-2xl font-bold text-primary">R$ 0</div>
             <div className="text-xs text-muted-foreground">Em Prêmios</div>
           </div>
           <div className="bg-card border border-border rounded-lg p-4 text-center">
@@ -149,6 +137,8 @@ const Ganhadores = () => {
             <div className="text-xs text-muted-foreground">Pagos</div>
           </div>
         </div>
+        </>
+        )}
       </div>
     </ResponsiveLayout>
   );

@@ -1,4 +1,4 @@
-import { Plus, Edit, Eye, BarChart3, Users, Trophy, Settings } from "lucide-react";
+import { Plus, Edit, Eye, BarChart3, Users, Trophy, Settings, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -83,6 +83,35 @@ const Admin = () => {
     setModalMode("edit");
     setSelectedAction(action);
     setModalOpen(true);
+  };
+
+  const handleDeleteAction = async (action: ActionData) => {
+    if (!action.id) return;
+    
+    if (confirm(`Tem certeza que deseja deletar a campanha "${action.name}"?`)) {
+      try {
+        const { error } = await supabase
+          .from('campaigns')
+          .delete()
+          .eq('id', action.id);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Campanha deletada!",
+          description: "A campanha foi removida com sucesso.",
+        });
+        
+        await loadCampaigns();
+      } catch (error: any) {
+        console.error('Erro ao deletar campanha:', error);
+        toast({
+          title: "Erro ao deletar",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    }
   };
 
   const handleSaveAction = async (data: ActionData) => {
@@ -245,6 +274,14 @@ const Admin = () => {
                       >
                         <Edit className="h-4 w-4 mr-1" />
                         Editar
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        onClick={() => handleDeleteAction(campaign)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Deletar
                       </Button>
                     </div>
                   </div>

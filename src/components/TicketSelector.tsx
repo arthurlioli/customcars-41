@@ -29,7 +29,17 @@ const TicketSelector = () => {
   };
 
   const currentQuantity = selectedQuantity || customQuantity;
-  const totalPrice = (currentQuantity * 4.99).toFixed(2).replace('.', ',');
+  
+  // Sistema de descontos progressivos
+  const getTicketPrice = (quantity: number) => {
+    if (quantity >= 100) return 3.99;
+    if (quantity >= 40) return 4.29;
+    if (quantity >= 10) return 4.49;
+    return 4.99;
+  };
+  
+  const ticketPrice = getTicketPrice(currentQuantity);
+  const totalPrice = (currentQuantity * ticketPrice).toFixed(2).replace('.', ',');
 
   return (
     <div className="space-y-6">
@@ -91,12 +101,37 @@ const TicketSelector = () => {
         </Button>
       </div>
 
+      {/* Price Display */}
+      <div className="bg-card border border-border rounded-lg p-4 space-y-2">
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground">Quantidade:</span>
+          <span className="font-semibold">{currentQuantity} bilhetes</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground">Preço unitário:</span>
+          <span className="font-semibold">R$ {ticketPrice.toFixed(2).replace('.', ',')}</span>
+        </div>
+        {currentQuantity >= 10 && (
+          <div className="text-green-600 text-sm font-medium">
+            {currentQuantity >= 100 ? '🎉 Desconto máximo aplicado!' : 
+             currentQuantity >= 40 ? '🎉 Desconto especial aplicado!' : 
+             '🎉 Desconto aplicado!'}
+          </div>
+        )}
+        <div className="border-t border-border pt-2">
+          <div className="flex justify-between items-center text-lg font-bold">
+            <span>Total:</span>
+            <span className="text-primary">R$ {totalPrice}</span>
+          </div>
+        </div>
+      </div>
+
       {/* Participate Button */}
       <Button 
         onClick={handlePayment}
         className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold rounded-lg"
       >
-        Participar (R$ {totalPrice})
+        Participar Agora
       </Button>
 
       {/* PIX Checkout Modal */}

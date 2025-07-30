@@ -42,7 +42,15 @@ serve(async (req) => {
       console.log("Usuario não autenticado, processando como convidado");
     }
 
-    const amount = quantity * 4.99;
+    // Sistema de descontos progressivos
+    const getTicketPrice = (quantity: number) => {
+      if (quantity >= 100) return 3.99;
+      if (quantity >= 40) return 4.29;
+      if (quantity >= 10) return 4.49;
+      return 4.99;
+    };
+    
+    const amount = quantity * getTicketPrice(quantity);
     const mercadoPagoToken = Deno.env.get("MERCADO_PAGO_ACCESS_TOKEN");
 
     if (!mercadoPagoToken) {

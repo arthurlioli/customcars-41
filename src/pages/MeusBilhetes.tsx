@@ -4,28 +4,8 @@ import { Button } from "@/components/ui/button";
 import ResponsiveLayout from "@/components/ResponsiveLayout";
 
 const MeusBilhetes = () => {
-  // Mock data - será substituído por dados reais do Supabase
-  const bilhetes = [
-    {
-      id: 1,
-      acao: "Ação X - Yamaha MT-03",
-      numerosBilhetes: ["00123", "00124", "00125"],
-      valor: 3.00,
-      dataCompra: "2024-12-08",
-      status: "Ativo",
-      dataSorteio: "2024-12-25"
-    },
-    {
-      id: 2,
-      acao: "Ação Y - Honda CB600F",
-      numerosBilhetes: ["00456", "00457"],
-      valor: 2.00,
-      dataCompra: "2024-12-07",
-      status: "Finalizado",
-      dataSorteio: "2024-12-07",
-      resultado: "Não contemplado"
-    }
-  ];
+  // Dados reais serão carregados do banco de dados
+  const bilhetes: any[] = [];
 
   return (
     <ResponsiveLayout>
