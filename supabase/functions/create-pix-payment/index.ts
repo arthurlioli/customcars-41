@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -50,7 +51,14 @@ serve(async (req) => {
       return 4.99;
     };
     
-    const amount = quantity * getTicketPrice(quantity);
+    // Calcular o valor total corretamente e arredondar para 2 casas decimais
+    const unitPrice = getTicketPrice(quantity);
+    const amount = Math.round((quantity * unitPrice) * 100) / 100;
+    
+    console.log("Quantity:", quantity);
+    console.log("Unit price:", unitPrice);
+    console.log("Amount calculated:", amount);
+    
     const mercadoPagoToken = Deno.env.get("MERCADO_PAGO_ACCESS_TOKEN");
 
     if (!mercadoPagoToken) {
@@ -101,7 +109,7 @@ serve(async (req) => {
 
     // Criar pagamento PIX no Mercado Pago
     const payment = {
-      transaction_amount: amount,
+      transaction_amount: parseFloat(amount.toFixed(2)),
       description: `${quantity} bilhetes - Sorteio Kawasaki Ninja`,
       payment_method_id: "pix",
       payer: {
@@ -115,6 +123,8 @@ serve(async (req) => {
       },
       external_reference: order.id,
     };
+
+    console.log("Payment object:", JSON.stringify(payment, null, 2));
 
     const response = await fetch("https://api.mercadopago.com/v1/payments", {
       method: "POST",
