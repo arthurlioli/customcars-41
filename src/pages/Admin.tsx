@@ -11,6 +11,8 @@ const Admin = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "edit" | "view">("create");
   const [selectedAction, setSelectedAction] = useState<ActionData | undefined>();
+  const [campaigns, setCampaigns] = useState<ActionData[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -25,38 +27,43 @@ const Admin = () => {
       const { data: isAdmin } = await supabase.rpc('is_admin', { user_id: user.id });
       if (!isAdmin) {
         navigate("/admin/login");
+        return;
       }
+      
+      // Carregar campanhas
+      await loadCampaigns();
     };
     
     checkAuth();
   }, [navigate]);
 
-  // Mock data - será substituído por dados reais do Supabase
-  const acoes = [
-    {
-      id: 1,
-      nome: "Ação X - Yamaha MT-03",
-      valorBilhete: 1.00,
-      totalBilhetes: 1000,
-      bilhetesVendidos: 750,
-      dataSorteio: "2024-12-25",
-      status: "Ativa"
-    },
-    {
-      id: 2,
-      nome: "Ação Y - Honda CB600F",
-      valorBilhete: 2.00,
-      totalBilhetes: 500,
-      bilhetesVendidos: 500,
-      dataSorteio: "2024-12-07",
-      status: "Finalizada"
+  const loadCampaigns = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      setCampaigns(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar campanhas:', error);
+      toast({
+        title: "Erro ao carregar campanhas",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
+  // Mock data para estatísticas - pode ser substituído por dados reais do Supabase
   const stats = {
     totalVendas: 1950.00,
     bilhetesVendidos: 1250,
-    acoesAtivas: 1,
+    acoesAtivas: campaigns.filter(c => c.status === 'active').length,
     participantes: 89
   };
 
@@ -66,24 +73,21 @@ const Admin = () => {
     setModalOpen(true);
   };
 
-  const handleViewAction = (action: any) => {
+  const handleViewAction = (action: ActionData) => {
     setModalMode("view");
     setSelectedAction(action);
     setModalOpen(true);
   };
 
-  const handleEditAction = (action: any) => {
+  const handleEditAction = (action: ActionData) => {
     setModalMode("edit");
     setSelectedAction(action);
     setModalOpen(true);
   };
 
-  const handleSaveAction = (data: ActionData) => {
-    // Aqui você implementaria a lógica de salvar no banco de dados
-    toast({
-      title: modalMode === "create" ? "Ação criada!" : "Ação atualizada!",
-      description: "As alterações foram salvas com sucesso.",
-    });
+  const handleSaveAction = async (data: ActionData) => {
+    // Recarregar campanhas após salvar
+    await loadCampaigns();
   };
 
   return (
@@ -183,71 +187,69 @@ const Admin = () => {
               </Button>
             </div>
 
-            {/* Lista de ações */}
+            {/* Lista de campanhas */}
             <div className="space-y-3">
-              {acoes.map((acao) => (
-                <div key={acao.id} className="bg-card border border-border rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="font-semibold text-foreground">{acao.nome}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Sorteio: {acao.dataSorteio}
-                      </p>
+              {loading ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">Carregando campanhas...</p>
+                </div>
+              ) : campaigns.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">Nenhuma campanha criada ainda.</p>
+                </div>
+              ) : (
+                campaigns.map((campaign) => (
+                  <div key={campaign.id} className="bg-card border border-border rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-semibold text-foreground">{campaign.name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Sorteio: {new Date(campaign.draw_date).toLocaleDateString('pt-BR')}
+                        </p>
+                      </div>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          campaign.status === "active"
+                            ? "bg-green-500/20 text-green-400"
+                            : "bg-gray-500/20 text-gray-400"
+                        }`}
+                      >
+                        {campaign.status === "active" ? "Ativa" : "Finalizada"}
+                      </span>
                     </div>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        acao.status === "Ativa"
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-gray-500/20 text-gray-400"
-                      }`}
-                    >
-                      {acao.status}
-                    </span>
-                  </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-                    <div>
-                      <span className="text-muted-foreground">Valor do bilhete:</span>
-                      <div className="font-medium">R$ {acao.valorBilhete.toFixed(2).replace('.', ',')}</div>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Progresso:</span>
-                      <div className="font-medium">
-                        {acao.bilhetesVendidos}/{acao.totalBilhetes} vendidos
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+                      <div>
+                        <span className="text-muted-foreground">Valor do bilhete:</span>
+                        <div className="font-medium">R$ {campaign.ticket_price.toFixed(2).replace('.', ',')}</div>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Total de bilhetes:</span>
+                        <div className="font-medium">{campaign.total_tickets}</div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Progress bar */}
-                  <div className="w-full bg-muted rounded-full h-2 mb-4">
-                    <div
-                      className="bg-primary h-2 rounded-full transition-all"
-                      style={{
-                        width: `${(acao.bilhetesVendidos / acao.totalBilhetes) * 100}%`,
-                      }}
-                    ></div>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleViewAction(campaign)}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        Ver
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleEditAction(campaign)}
+                      >
+                        <Edit className="h-4 w-4 mr-1" />
+                        Editar
+                      </Button>
+                    </div>
                   </div>
-
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleViewAction(acao)}
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      Ver
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleEditAction(acao)}
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Editar
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         )}

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface AdminActionModalProps {
   isOpen: boolean;
@@ -15,43 +17,106 @@ interface AdminActionModalProps {
 }
 
 export interface ActionData {
-  id?: number;
-  nome: string;
-  descricao: string;
-  valorBilhete: number;
-  totalBilhetes: number;
-  dataSorteio: string;
-  regulamento: string;
-  fotos: string[];
+  id?: string;
+  name: string;
+  description: string;
+  ticket_price: number;
+  total_tickets: number;
+  draw_date: string;
+  regulations: string;
+  photos: string[];
+  status?: string;
 }
 
 const AdminActionModal = ({ isOpen, onClose, onSave, initialData, mode }: AdminActionModalProps) => {
   const [formData, setFormData] = useState<ActionData>(
     initialData || {
-      nome: "",
-      descricao: "",
-      valorBilhete: 1.0,
-      totalBilhetes: 1000,
-      dataSorteio: "",
-      regulamento: "",
-      fotos: [],
+      name: "",
+      description: "",
+      ticket_price: 4.99,
+      total_tickets: 1000,
+      draw_date: "",
+      regulations: "",
+      photos: [],
     }
   );
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
-    onClose();
+    setLoading(true);
+    
+    try {
+      if (mode === "create") {
+        const { error } = await supabase
+          .from("campaigns")
+          .insert({
+            name: formData.name,
+            description: formData.description,
+            ticket_price: formData.ticket_price,
+            total_tickets: formData.total_tickets,
+            draw_date: formData.draw_date,
+            regulations: formData.regulations,
+            photos: formData.photos,
+          });
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Campanha criada!",
+          description: "A campanha foi criada com sucesso.",
+        });
+      } else if (mode === "edit" && formData.id) {
+        const { error } = await supabase
+          .from("campaigns")
+          .update({
+            name: formData.name,
+            description: formData.description,
+            ticket_price: formData.ticket_price,
+            total_tickets: formData.total_tickets,
+            draw_date: formData.draw_date,
+            regulations: formData.regulations,
+            photos: formData.photos,
+          })
+          .eq("id", formData.id);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Campanha atualizada!",
+          description: "As alterações foram salvas com sucesso.",
+        });
+      }
+      
+      onSave(formData);
+      onClose();
+    } catch (error: any) {
+      console.error('Erro ao salvar campanha:', error);
+      toast({
+        title: "Erro ao salvar",
+        description: error.message || "Ocorreu um erro ao salvar a campanha",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      // Simulação de upload - aqui você implementaria o upload real
+      // Simulação de upload - aqui você implementaria o upload real para storage
       const newPhotos = Array.from(files).map(file => URL.createObjectURL(file));
       setFormData(prev => ({
         ...prev,
-        fotos: [...prev.fotos, ...newPhotos]
+        photos: [...prev.photos, ...newPhotos]
       }));
     }
   };
@@ -59,7 +124,7 @@ const AdminActionModal = ({ isOpen, onClose, onSave, initialData, mode }: AdminA
   const removePhoto = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      fotos: prev.fotos.filter((_, i) => i !== index)
+      photos: prev.photos.filter((_, i) => i !== index)
     }));
   };
 
@@ -76,11 +141,11 @@ const AdminActionModal = ({ isOpen, onClose, onSave, initialData, mode }: AdminA
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="nome">Nome da Ação</Label>
+              <Label htmlFor="name">Nome da Campanha</Label>
               <Input
-                id="nome"
-                value={formData.nome}
-                onChange={(e) => setFormData(prev => ({ ...prev, nome: e.target.value }))}
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="Ex: Kawasaki Ninja"
                 disabled={isViewMode}
                 required
@@ -88,14 +153,14 @@ const AdminActionModal = ({ isOpen, onClose, onSave, initialData, mode }: AdminA
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="valorBilhete">Valor do Bilhete (R$)</Label>
+              <Label htmlFor="ticket_price">Valor do Bilhete (R$)</Label>
               <Input
-                id="valorBilhete"
+                id="ticket_price"
                 type="number"
                 step="0.01"
                 min="0.01"
-                value={formData.valorBilhete}
-                onChange={(e) => setFormData(prev => ({ ...prev, valorBilhete: Number(e.target.value) }))}
+                value={formData.ticket_price}
+                onChange={(e) => setFormData(prev => ({ ...prev, ticket_price: Number(e.target.value) }))}
                 disabled={isViewMode}
                 required
               />
@@ -104,25 +169,25 @@ const AdminActionModal = ({ isOpen, onClose, onSave, initialData, mode }: AdminA
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="totalBilhetes">Total de Bilhetes</Label>
+              <Label htmlFor="total_tickets">Total de Bilhetes</Label>
               <Input
-                id="totalBilhetes"
+                id="total_tickets"
                 type="number"
                 min="1"
-                value={formData.totalBilhetes}
-                onChange={(e) => setFormData(prev => ({ ...prev, totalBilhetes: Number(e.target.value) }))}
+                value={formData.total_tickets}
+                onChange={(e) => setFormData(prev => ({ ...prev, total_tickets: Number(e.target.value) }))}
                 disabled={isViewMode}
                 required
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="dataSorteio">Data do Sorteio</Label>
+              <Label htmlFor="draw_date">Data do Sorteio</Label>
               <Input
-                id="dataSorteio"
+                id="draw_date"
                 type="date"
-                value={formData.dataSorteio}
-                onChange={(e) => setFormData(prev => ({ ...prev, dataSorteio: e.target.value }))}
+                value={formData.draw_date}
+                onChange={(e) => setFormData(prev => ({ ...prev, draw_date: e.target.value }))}
                 disabled={isViewMode}
                 required
               />
@@ -130,24 +195,24 @@ const AdminActionModal = ({ isOpen, onClose, onSave, initialData, mode }: AdminA
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="descricao">Descrição</Label>
+            <Label htmlFor="description">Descrição</Label>
             <Textarea
-              id="descricao"
-              value={formData.descricao}
-              onChange={(e) => setFormData(prev => ({ ...prev, descricao: e.target.value }))}
-              placeholder="Descrição detalhada da ação..."
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              placeholder="Descrição detalhada da campanha..."
               disabled={isViewMode}
               rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="regulamento">Regulamento</Label>
+            <Label htmlFor="regulations">Regulamento</Label>
             <Textarea
-              id="regulamento"
-              value={formData.regulamento}
-              onChange={(e) => setFormData(prev => ({ ...prev, regulamento: e.target.value }))}
-              placeholder="Regulamento da ação..."
+              id="regulations"
+              value={formData.regulations}
+              onChange={(e) => setFormData(prev => ({ ...prev, regulations: e.target.value }))}
+              placeholder="Regulamento da campanha..."
               disabled={isViewMode}
               rows={4}
             />
@@ -182,11 +247,11 @@ const AdminActionModal = ({ isOpen, onClose, onSave, initialData, mode }: AdminA
             </div>
           )}
 
-          {formData.fotos.length > 0 && (
+          {formData.photos.length > 0 && (
             <div className="space-y-2">
               <Label>Fotos Adicionadas</Label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {formData.fotos.map((photo, index) => (
+                {formData.photos.map((photo, index) => (
                   <div key={index} className="relative">
                     <img
                       src={photo}
@@ -215,8 +280,8 @@ const AdminActionModal = ({ isOpen, onClose, onSave, initialData, mode }: AdminA
               {isViewMode ? "Fechar" : "Cancelar"}
             </Button>
             {!isViewMode && (
-              <Button type="submit">
-                {mode === "create" ? "Criar Ação" : "Salvar Alterações"}
+              <Button type="submit" disabled={loading}>
+                {loading ? "Salvando..." : mode === "create" ? "Criar Campanha" : "Salvar Alterações"}
               </Button>
             )}
           </div>

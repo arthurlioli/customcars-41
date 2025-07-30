@@ -38,6 +38,48 @@ export type Database = {
         }
         Relationships: []
       }
+      campaigns: {
+        Row: {
+          created_at: string
+          description: string | null
+          draw_date: string
+          id: string
+          name: string
+          photos: string[] | null
+          regulations: string | null
+          status: string
+          ticket_price: number
+          total_tickets: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          draw_date: string
+          id?: string
+          name: string
+          photos?: string[] | null
+          regulations?: string | null
+          status?: string
+          ticket_price: number
+          total_tickets: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          draw_date?: string
+          id?: string
+          name?: string
+          photos?: string[] | null
+          regulations?: string | null
+          status?: string
+          ticket_price?: number
+          total_tickets?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           amount: number
