@@ -131,6 +131,7 @@ serve(async (req) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${mercadoPagoToken}`,
+        "X-Idempotency-Key": crypto.randomUUID(),
       },
       body: JSON.stringify(payment),
     });
