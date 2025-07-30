@@ -104,8 +104,8 @@ const Index = () => {
         {/* Footer */}
         <footer className="text-xs text-muted-foreground text-center space-y-2 pt-8 border-t border-border">
           <p>Sorteio realizado por Custom Club Cars, Inscrito sob CNPJ:</p>
-          <p>XXXXXXXXXXXXXXX, Endereço em: Rua</p>
-          <p>XXXXXXXXXXXXXXX, N°XXX, XXXXXX, Brasil.</p>
+          <p>XXXXXXXXXXXXXXX</p>
+          <p>End: Av.Paulista, 2202 - 7°andar - cjto: 71 - sala 07-B, São Paulo, CEP: 01310-300.</p>
           <p className="pt-4">Todos os direitos reservados © 2025 -</p>
         </footer>
       </main>
