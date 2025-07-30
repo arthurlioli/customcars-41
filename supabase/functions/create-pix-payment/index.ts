@@ -126,12 +126,15 @@ serve(async (req) => {
 
     console.log("Payment object:", JSON.stringify(payment, null, 2));
 
+    // Gerar um ID único para idempotência
+    const idempotencyKey = `${order.id}-${Date.now()}`;
+
     const response = await fetch("https://api.mercadopago.com/v1/payments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${mercadoPagoToken}`,
-        "X-Idempotency-Key": crypto.randomUUID(),
+        "X-Idempotency-Key": idempotencyKey,
       },
       body: JSON.stringify(payment),
     });
